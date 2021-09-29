@@ -380,8 +380,35 @@ function getDigitalRoot(num) {
  *   '{)' = false
  *   '{[(<{[]}>)]}' = true
  */
-function isBracketsBalanced(/* str */) {
-  throw new Error('Not implemented');
+function isBracketsBalanced(str) {
+  const mapping = {
+    '[': ']',
+    '{': '}',
+    '<': '>',
+    '(': ')',
+  };
+  const opening = new Set(Object.keys(mapping));
+  const closing = new Set(Object.values(mapping));
+
+  const stack = [];
+
+  for (let i = 0; i < str.length; i += 1) {
+    const current = str[i];
+
+    if (opening.has(current)) {
+      stack.push(current);
+    } else if (closing.has(current)) {
+      if (stack.length === 0) return false;
+
+      const last = stack.pop();
+
+      if (mapping[last] !== current) {
+        return false;
+      }
+    }
+  }
+
+  return stack.length === 0;
 }
 
 
@@ -434,8 +461,30 @@ function toNaryString(num, n) {
  *   ['/web/assets/style.css', '/.bin/mocha',  '/read.me'] => '/'
  *   ['/web/favicon.ico', '/web-scripts/dump', '/webalizer/logs'] => '/'
  */
-function getCommonDirectoryPath(/* pathes */) {
-  throw new Error('Not implemented');
+function getCommonDirectoryPath(pathes) {
+  const common = [];
+
+  const splitPaths = pathes.map((p) => p.split('/'));
+  const result = () => common.reduce((p, current) => `${p}${current}/`, '');
+
+  for (let i = 0; i < splitPaths[0].length; i += 1) {
+    const part = splitPaths[0][i];
+    let count = 1;
+
+    for (let j = 1; j < splitPaths.length; j += 1) {
+      const comparePart = splitPaths[j][i];
+
+      if (comparePart === part) count += 1;
+    }
+
+    if (count === pathes.length) {
+      common.push(part);
+    } else {
+      return result();
+    }
+  }
+
+  return result();
 }
 
 
@@ -457,8 +506,21 @@ function getCommonDirectoryPath(/* pathes */) {
  *                         [ 6 ]]
  *
  */
-function getMatrixProduct(/* m1, m2 */) {
-  throw new Error('Not implemented');
+function getMatrixProduct(m1, m2) {
+  const result = [];
+  for (let i = 0; i < m1.length; i += 1) {
+    result[i] = [];
+    for (let j = 0; j < m2.length; j += 1) {
+      let sum = 0;
+      for (let k = 0; k < m1[0].length; k += 1) {
+        sum += m1[i][k] * m2[k][j];
+      }
+      if (sum) {
+        result[i][j] = sum;
+      }
+    }
+  }
+  return result;
 }
 
 
@@ -492,8 +554,80 @@ function getMatrixProduct(/* m1, m2 */) {
  *    [    ,   ,    ]]
  *
  */
-function evaluateTicTacToePosition(/* position */) {
-  throw new Error('Not implemented');
+function evaluateTicTacToePosition(position) {
+  let winner;
+  const { length } = position;
+
+  // check rows
+  for (let i = 0; i < length; i += 1) {
+    const rowCheck = position[i][0];
+    let rowSameCount = 1;
+
+    for (let j = 1; j < length; j += 1) {
+      if (typeof rowCheck === 'undefined') break;
+
+      if (rowCheck === position[i][j]) {
+        rowSameCount += 1;
+      }
+    }
+
+    if (rowSameCount === length) {
+      winner = rowCheck;
+      return winner;
+    }
+  }
+
+  // check cols
+  for (let i = 0; i < length; i += 1) {
+    const colCheck = position[0][i];
+    let colSameCount = 1;
+
+    for (let j = 1; j < length; j += 1) {
+      if (typeof colCheck === 'undefined') break;
+
+      if (colCheck === position[j][i]) {
+        colSameCount += 1;
+      }
+    }
+
+    if (colSameCount === length) {
+      winner = colCheck;
+      return winner;
+    }
+  }
+
+  // diagonals check
+  let leftSameCount = 1;
+  let rightSameCount = 1;
+  const leftCheck = position[0][0];
+  const rightCheck = position[0][length - 1];
+
+  if (typeof leftCheck !== 'undefined') {
+    for (let i = 1; i < length; i += 1) {
+      if (leftCheck === position[i][i]) {
+        leftSameCount += 1;
+      }
+    }
+  }
+  if (typeof rightCheck !== 'undefined') {
+    for (let i = 1; i < length; i += 1) {
+      if (rightCheck === position[i][length - 1 - i]) {
+        rightSameCount += 1;
+      }
+    }
+  }
+
+  if (leftSameCount === length) {
+    winner = leftCheck;
+    return winner;
+  }
+
+  if (rightSameCount === length) {
+    winner = rightCheck;
+    return winner;
+  }
+
+  return winner;
 }
 
 
